@@ -48,6 +48,15 @@ class Task {
         return res.rows[0];
     }
 
+    // Update task
+    static async updateTask(id, title, description) {
+        const res = await pool.query(
+            'UPDATE tasks SET title = $1, description = $2 WHERE id = $3 RETURNING *',
+            [title, description, id]
+        );
+        return res.rows[0];
+    }
+
     // Delet task
     static async delete(id) {
         await pool.query('DELETE FROM tasks WHERE id = $1', [id]);

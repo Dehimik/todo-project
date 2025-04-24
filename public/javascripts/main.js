@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('taskForm');
     const taskList = document.getElementById('taskList');
+    const editModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+
+    let currentTaskItem = null;
 
     // Add task
     taskForm.addEventListener('submit', async (e) => {
@@ -74,4 +77,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Update task
+    taskList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('edit-btn')) {
+            currentTaskItem = e.target.closest('li');
+            const id = currentTaskItem.dataset.id;
+            const title = currentTaskItem.querySelector('.task-title').textContent.trim();
+            const description = currentTaskItem.querySelector('.task-description').textContent.trim();
+
+            document.getElementById('editTaskId').value = id;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editDescription').value = description;
+
+            editModal.show();
+        }
+    });
+
+    editTaskForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('editTaskId').value;
+        const title = document.getElementById('editTitle').value;
+        const description = document.getElementById('editDescription').value;
+
+        try {
+            const response = await fetch(`/tasks/${id}/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, description })
+            });
+
+            if (response.ok) {
+                currentTaskItem.querySelector('.task-title').textContent = title;
+                currentTaskItem.querySelector('.task-description').textContent = description;
+                editModal.hide();
+            }
+        } catch (err) {
+            console.error('Error updating task:', err);
+        }
+    });
+
 });
