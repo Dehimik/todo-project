@@ -114,6 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTaskItem.querySelector('.task-title').textContent = title;
                 currentTaskItem.querySelector('.task-description').textContent = description;
                 editModal.hide();
+            } else {
+                const error = await response.json();
+                alert('Error: ' + (error.error || 'Failed to update task'));
             }
         } catch (err) {
             console.error('Error updating task:', err);

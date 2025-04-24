@@ -45,8 +45,10 @@ router.put('/:id/edit', async (req, res) => {
 
     try {
         const updatedTask = await Task.updateTask(id, title, description);
+        if (!updatedTask) {
+            return res.status(404).json({ error: 'Task not found' });
+        }
         res.json(updatedTask);
-        res.sendStatus(200);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to update task' });
